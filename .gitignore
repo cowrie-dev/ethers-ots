@@ -9,3 +9,7 @@ dist/*.gz
 **/.DS_Store
 
 .iterm2-project
+
+# Build artifacts (for npm package fork)
+lib.commonjs/
+lib.esm/
