@@ -126,5 +126,5 @@
     "test-esm": "mocha --trace-warnings --reporter ./reporter.cjs ./lib.esm/_tests/test-*.js"
   },
   "sideEffects": false,
-  "version": "6.15.0-otterscan.3.5"
+  "version": "6.15.0-otterscan.3.6"
 }
