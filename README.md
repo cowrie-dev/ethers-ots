@@ -1,140 +1,144 @@
-The Ethers Project
-==================
+# Ethers.js + Otterscan
 
-[![npm (tag)](https://img.shields.io/npm/v/ethers)](https://www.npmjs.com/package/ethers)
-[![CI Tests](https://github.com/ethers-io/ethers.js/actions/workflows/test-ci.yml/badge.svg?branch=main)](https://github.com/ethers-io/ethers.js/actions/workflows/test-ci.yml)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/ethers)
-![npm (downloads)](https://img.shields.io/npm/dm/ethers)
-[![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/ethers-io/ethers.js/badge)](https://www.gitpoap.io/gh/ethers-io/ethers.js)
-[![Twitter Follow](https://img.shields.io/twitter/follow/ricmoo?style=social)](https://twitter.com/ricmoo)
+[![npm (tag)](https://img.shields.io/npm/v/@cowrieio/ethers-otterscan)](https://www.npmjs.com/package/@cowrieio/ethers-otterscan)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/@cowrieio/ethers-otterscan)
+![npm (downloads)](https://img.shields.io/npm/dm/@cowrieio/ethers-otterscan)
 
 -----
 
-A complete, compact and simple library for Ethereum and ilk, written
-in [TypeScript](https://www.typescriptlang.org).
+**A fork of [Ethers.js](https://github.com/ethers-io/ethers.js) with added support for [Otterscan](https://github.com/otterscan/otterscan) / Erigon's OTS namespace.**
 
-**Features**
+This package extends the popular Ethers.js library with specialized provider methods for interacting with Erigon nodes that expose the `ots_*` JSON-RPC methods. These methods provide efficient access to blockchain explorer data without requiring external indexers.
 
-- Keep your private keys in your client, **safe** and sound
-- Import and export **JSON wallets** (Geth, Parity and crowdsale)
-- Import and export BIP 39 **mnemonic phrases** (12 word backup phrases) and **HD Wallets** (English as well as Czech, French, Italian, Japanese, Korean, Simplified Chinese, Spanish, Traditional Chinese)
-- Meta-classes create JavaScript objects from any contract ABI, including **ABIv2** and **Human-Readable ABI**
-- Connect to Ethereum nodes over [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC), [INFURA](https://infura.io), [Etherscan](https://etherscan.io), [Alchemy](https://alchemyapi.io), [Ankr](https://ankr.com) or [MetaMask](https://metamask.io)
-- **ENS names** are first-class citizens; they can be used anywhere an Ethereum addresses can be used
-- **Small** (~144kb compressed; 460kb uncompressed)
-- **Tree-shaking** focused; include only what you need during bundling
-- **Complete** functionality for all your Ethereum desires
-- Extensive [documentation](https://docs.ethers.org/v6/)
-- Large collection of **test cases** which are maintained and added to
-- Fully written in **TypeScript**, with strict types for security and safety
-- **MIT License** (including ALL dependencies); completely open source to do with as you please
+## 🆕 Otterscan Features
 
+The `OtterscanProvider` class extends `JsonRpcProvider` with the following additional methods:
 
-Keep Updated
-------------
+- **Transaction Analysis**
+  - `traceTransaction()` - Get detailed execution traces
+  - `getInternalOperations()` - Get internal operations (transfers, creates, etc.)
+  - `getTransactionErrorData()` - Get raw revert data for failed transactions
+  - `getTransactionRevertReason()` - Get human-readable revert reasons
 
-For advisories and important notices, follow [@ethersproject](https://twitter.com/ethersproject)
-on Twitter (low-traffic, non-marketing, important information only) as well as watch this GitHub project.
+- **Block Information**  
+  - `getBlockDetails()` - Get block data with issuance and fee information
+  - `getBlockTransactions()` - Get paginated block transactions with receipts
 
-For more general news, discussions, and feedback, follow or DM me,
-[@ricmoo](https://twitter.com/ricmoo) on Twitter or on the
-[Ethers Discord](https://discord.gg/qYtSscGYYc).
+- **Address History**
+  - `searchTransactionsBefore()` - Search transactions before a block
+  - `searchTransactionsAfter()` - Search transactions after a block  
+  - `iterateAddressHistory()` - Async iterator for transaction history
 
+- **Utilities**
+  - `hasCode()` - Efficiently check if address is a contract
+  - `getTransactionBySenderAndNonce()` - Find transaction by sender/nonce
+  - `getContractCreator()` - Get contract creation details
+  - `otsApiLevel()` - Check supported OTS API level
 
-For the latest changes, see the
-[CHANGELOG](https://github.com/ethers-io/ethers.js/blob/main/CHANGELOG.md).
+## Installation
 
-
-**Summaries**
-
-- [August 2023](https://blog.ricmoo.com/highlights-ethers-js-august-2023-fb68354c576c)
-- [September 2022](https://blog.ricmoo.com/highlights-ethers-js-september-2022-d7bda0fc37ed)
-- [June 2022](https://blog.ricmoo.com/highlights-ethers-js-june-2022-f5328932e35d)
-- [March 2022](https://blog.ricmoo.com/highlights-ethers-js-march-2022-f511fe1e88a1)
-- [December 2021](https://blog.ricmoo.com/highlights-ethers-js-december-2021-dc1adb779d1a)
-- [September 2021](https://blog.ricmoo.com/highlights-ethers-js-september-2021-1bf7cb47d348)
-- [May 2021](https://blog.ricmoo.com/highlights-ethers-js-may-2021-2826e858277d)
-- [March 2021](https://blog.ricmoo.com/highlights-ethers-js-march-2021-173d3a545b8d)
-- [December 2020](https://blog.ricmoo.com/highlights-ethers-js-december-2020-2e2db8bc800a)
-
-
-
-Installing
-----------
-
-**NodeJS**
-
-```
-/home/ricmoo/some_project> npm install ethers
+```bash
+npm install @cowrieio/ethers-otterscan
 ```
 
-**Browser (ESM)**
+## Usage
 
-The bundled library is available in the `./dist/` folder in this repo.
+```typescript
+import { OtterscanProvider } from '@cowrieio/ethers-otterscan';
 
+// Connect to an Erigon node with OTS namespace enabled
+const provider = new OtterscanProvider('https://your-erigon-node.com');
+
+// Check OTS availability
+await provider.ensureOts(8); // Requires API level 8+
+
+// Get transaction trace
+const traces = await provider.traceTransaction('0x...');
+console.log(traces); // Array of trace entries
+
+// Search address history
+for await (const { tx, receipt } of provider.iterateAddressHistory(
+  '0x...', 
+  'before', 
+  await provider.getBlockNumber()
+)) {
+  console.log(`Transaction: ${tx.hash}`);
+}
+
+// Get internal operations
+const ops = await provider.getInternalOperations('0x...');
+console.log(ops); // Array of internal operations
 ```
-<script type="module">
-    import { ethers } from "./dist/ethers.min.js";
-</script>
+
+## TypeScript Support
+
+Full TypeScript support with proper types for all OTS methods:
+
+```typescript
+import { OtterscanProvider, type OtsTraceEntry } from '@cowrieio/ethers-otterscan';
+
+const provider = new OtterscanProvider('https://your-erigon-node.com');
+const traces: OtsTraceEntry[] = await provider.traceTransaction('0x...');
 ```
 
+## Compatibility
 
-Documentation
--------------
+- **Ethers.js**: Based on Ethers.js v6.15.0
+- **Erigon**: Compatible with Erigon nodes running OTS namespace
+- **Networks**: Works with any EVM-compatible network running Erigon
 
-Browse the [documentation](https://docs.ethers.org) online:
+## Requirements
 
-- [Getting Started](https://docs.ethers.org/v6/getting-started/)
-- [Full API Documentation](https://docs.ethers.org/v6/api/)
-- [Various Ethereum Articles](https://blog.ricmoo.com/)
+Your Erigon node must be configured with the OTS namespace enabled:
 
+```bash
+# Start Erigon with OTS namespace
+erigon --http.api "eth,erigon,trace,ots" --http --http.addr "0.0.0.0"
+```
 
+## Upstream Compatibility
 
-Providers
----------
+This fork maintains full compatibility with the upstream Ethers.js library. All existing Ethers.js functionality works exactly as documented in the [official Ethers.js documentation](https://docs.ethers.org).
 
-Ethers works closely with an ever-growing list of third-party providers
-to ensure getting started is quick and easy, by providing default keys
-to each service.
+## Differences from Upstream
 
-These built-in keys mean you can use `ethers.getDefaultProvider()` and
-start developing right away.
+- ✅ **Added**: `OtterscanProvider` class with OTS namespace support
+- ✅ **Added**: TypeScript interfaces for all OTS response types
+- ✅ **Added**: Comprehensive test coverage for OTS methods
+- ✅ **No breaking changes** to existing Ethers.js functionality
 
-However, the API keys provided to ethers are also shared and are
-intentionally throttled to encourage developers to eventually get
-their own keys, which unlock many other features, such as faster
-responses, more capacity, analytics and other features like archival
-data.
+## Testing Nodes
 
-When you are ready to sign up and start using for your own keys, please
-check out the [Provider API Keys](https://docs.ethers.org/v5/api-keys/) in
-the documentation.
+OTS methods are supported on any Erigon node with OTS namespace enabled in launch arguments.
 
-A special thanks to these services for providing community resources:
+## Documentation
 
-- [Ankr](https://www.ankr.com/)
-- [QuickNode](https://www.quicknode.com/)
-- [Etherscan](https://etherscan.io/)
-- [INFURA](https://infura.io/)
-- [Alchemy](https://dashboard.alchemyapi.io/signup?referral=55a35117-028e-4b7c-9e47-e275ad0acc6d)
+- [Ethers.js Documentation](https://docs.ethers.org/v6/) - All standard Ethers.js functionality
+- [Otterscan Documentation](https://docs.otterscan.io/) - Details about OTS methods
+- [Erigon Documentation](https://github.com/ledgerwatch/erigon) - Node configuration
 
+## Contributing
 
-Extension Packages
-------------------
+This is a community-maintained fork. Contributions are welcome!
 
-The `ethers` package only includes the most common and most core
-functionality to interact with Ethereum. There are many other
-packages designed to further enhance the functionality and experience.
+1. Fork the repository
+2. Make your changes
+3. Add tests for new functionality
+4. Submit a pull request
 
-- [MulticallProvider](https://github.com/ethers-io/ext-provider-multicall) - A Provider which bundles multiple call requests into a single `call` to reduce latency and backend request capacity
-- [MulticoinPlugin](https://github.com/ethers-io/ext-provider-plugin-multicoin) - A Provider plugin to expand the support of ENS coin types
-- [GanaceProvider](https://github.com/ethers-io/ext-provider-ganache) - A Provider for in-memory node instances, for fast debugging, testing and simulating blockchain operations
-- [Optimism Utilities](https://github.com/ethers-io/ext-utils-optimism) - A collection of Optimism utilities
-- [LedgerSigner](https://github.com/ethers-io/ext-signer-ledger) - A Signer to interact directly with Ledger Hardware Wallets
+## Relationship to Upstream
 
+This package is a fork of [ethers-io/ethers.js](https://github.com/ethers-io/ethers.js) with additional functionality. It is not officially endorsed by the Ethers.js maintainers.
 
-License
--------
+- **Upstream**: `ethers` - The official Ethers.js library
+- **This fork**: `@cowrieio/ethers-otterscan` - Community fork with Otterscan support
 
-MIT License (including **all** dependencies).
+## License
 
+MIT License (including **all** dependencies), same as upstream Ethers.js.
+
+## Credits
+
+- **[Ethers.js](https://github.com/ethers-io/ethers.js)** by Richard Moore - The amazing library this fork is based on
+- **[Otterscan](https://github.com/otterscan/otterscan)** - The blockchain explorer that defines the OTS namespace
+- **[Erigon](https://github.com/ledgerwatch/erigon)** - The Ethereum client that implements OTS methods
