@@ -17,7 +17,7 @@
     "tslib": "2.7.0",
     "ws": "8.17.1"
   },
-  "description": "A complete and compact Ethereum library, for dapps, wallets and any other tools.",
+  "description": "A fork of Ethers.js with added support for Otterscan/Erigon OTS namespace methods for blockchain explorer functionality.",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "15.3.0",
     "@types/mocha": "10.0.9",
@@ -32,7 +32,6 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "ethereum": "donations.ethers.eth",
   "exports": {
     ".": {
       "import": "./lib.esm/index.js",
@@ -83,22 +82,17 @@
       "default": "./lib.commonjs/wordlists/index.js"
     }
   },
-  "funding": [
-    {
-      "type": "individual",
-      "url": "https://github.com/sponsors/ethers-io/"
-    },
-    {
-      "type": "individual",
-      "url": "https://www.buymeacoffee.com/ricmoo"
-    }
-  ],
   "gitHead": "9944ec94b154b4f8fdfeefb81a1e47b28fd907bc",
-  "homepage": "https://ethers.org",
+  "homepage": "https://cowrie.io",
   "keywords": [
     "ethereum",
     "ethers",
-    "ethersjs"
+    "ethersjs",
+    "otterscan",
+    "erigon",
+    "ots",
+    "blockchain-explorer",
+    "trace"
   ],
   "license": "MIT",
   "main": "./lib.commonjs/index.js",
@@ -110,7 +104,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ethers-io/ethers.js.git"
+    "url": "git://github.com/cowrie-dev/ethers-ots.git"
   },
   "scripts": {
     "_build-dist": "rollup -c && uglifyjs ./dist/ethers.js -o ./dist/ethers.min.js && uglifyjs ./dist/ethers.umd.js -o ./dist/ethers.umd.min.js && uglifyjs ./dist/wordlists-extra.js -o ./dist/wordlists-extra.min.js",
@@ -132,5 +126,5 @@
     "test-esm": "mocha --trace-warnings --reporter ./reporter.cjs ./lib.esm/_tests/test-*.js"
   },
   "sideEffects": false,
-  "version": "6.15.0-otterscan.3.3"
+  "version": "6.15.0-otterscan.3.5"
 }
