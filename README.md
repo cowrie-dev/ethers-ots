@@ -56,11 +56,11 @@ await provider.ensureOts(8); // Requires API level 8+
 const traces = await provider.traceTransaction('0x...');
 console.log(traces); // Array of trace entries
 
-// Search address history
+// Search address history between blocks
 for await (const { tx, receipt } of provider.iterateAddressHistory(
   '0x...', 
-  'before', 
-  await provider.getBlockNumber()
+  19000000,  // start block
+  19010000   // end block
 )) {
   console.log(`Transaction: ${tx.hash}`);
 }
